@@ -27,7 +27,7 @@ You can configure connection parameters in /config/parameters.yml
 Then, access it via http://localhost:8080 or http://host-ip:8080 and login with user:`root`, password:`root` and db: `leadquizzes`
 
 ### Loading Fixtures (`REQUIRED`):
-
+`php bin/console doctrine:schema:update --force`
 `php bin/console doctrine:fixtures:load`
 
 It will generate some quizzes and user profile, required to login with user:`admin` and password:`password`
