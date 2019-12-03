@@ -15,6 +15,7 @@
 /vendor/
 /web/bundles/
 /db/
+/config/jwt
 
 # IDEs and editors
 /.idea
