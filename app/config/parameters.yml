@@ -1,0 +1,16 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: '127.0.0.1:3366'
+    database_port: null
+    database_name: leadquizzes
+    database_user: root
+    database_password: root
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    secret: 486a41ea96aa721a6273b575417a5cdfc316a1a5
+    jwt_private_key_path: '%kernel.project_dir%/var/jwt/private.pem'
+    jwt_public_key_path: '%kernel.project_dir%/var/jwt/public.pem'
+    jwt_key_pass_phrase: 'quiz'
+    jwt_token_ttl: 3600
