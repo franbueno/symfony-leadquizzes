@@ -43,7 +43,7 @@ It will generate some quizzes and user profile, required to login with `admin` a
 We used LexikJWTAuthenticationBundle to provide JWT (Json Web Token) authentication for this Symfony API so we need to generate SSH keys.
 
 ### Run server:
-php bin/console server:run command
+`php bin/console server:run command`
 
 ### Everything up and running?
 
