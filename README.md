@@ -25,10 +25,9 @@ See docker-compose.yml for information.
 You can configure connection parameters in /config/parameters.yml
 
 Then, access it via http://localhost:8080 or http://host-ip:8080 and login with user:`root`, password:`root` and db: `leadquizzes`
+## ATTENTION PLEASE, takes a few seconds to mount MySQL and adminer so please wait until move to next step
 
 ### Loading Fixtures (`REQUIRED`):
-
-`ATTENTION PLEASE, takes a few seconds to mount MySQL and adminer so please wait until run command below:`
 
 `php bin/console doctrine:schema:update --force`
 
