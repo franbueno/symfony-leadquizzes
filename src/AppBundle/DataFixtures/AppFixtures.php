@@ -1,35 +1,68 @@
 <?php
 
-namespace AppBundle\Command;
+namespace AppBundle\DataFixtures;
+
 use AppBundle\Entity\Quiz;
 use AppBundle\Entity\User;
 use Faker\Factory;
 use Faker\ORM\Doctrine\Populator;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-class GenerateFakeDataCommand extends ContainerAwareCommand
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+
+class AppFixtures extends Fixture implements ContainerAwareInterface
 {
-    protected function configure()
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+    private $encoder;
+
+    public function __construct(UserPasswordEncoderInterface $encoder)
     {
-        $this
-            // the name of the command (the part after "bin/console")
-            ->setName('app:generate-fake-data')
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Generates data with Faker library.')
-            // the full command description shown when running the command with
-            // the "--help" option
-            ->setHelp('This command allows you to generate a fake data ...');
+        $this->encoder = $encoder;
     }
-    protected function execute(InputInterface $input, OutputInterface $output)
+
+    /**
+     * Sets the container.
+     * @param ContainerInterface|null $container A ContainerInterface instance or null
+     */
+    public function setContainer(ContainerInterface $container = null)
     {
-        $path = realpath(__DIR__ . '/../../../bin');
-        passthru(sprintf('php %s/console doctrine:database:drop --force ', $path));
-        passthru(sprintf('php %s/console doctrine:database:create ', $path));
-        passthru(sprintf('php %s/console doctrine:schema:update --force ', $path));
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $this->container = $container;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    public function load(ObjectManager $manager)
+    {
+
+        // Create user
+        $userManager = $this->container->get('fos_user.user_manager');
+        $user = $userManager->createUser();
+        $user = new User;
+        $username = 'admin';
+        $email = 'admin@example.com';
+        $password = $this->encoder->encodePassword($user, 'password');
+        $firstName = 'Francisco';
+        $lastName = 'Bueno';
+
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setPassword($password);
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
+        $user->setEnabled(true);
+
+        $manager->persist($user);
+        $manager->flush();
+
+        // Create quizzes
         $generator = Factory::create();
-        $populator = new Populator($generator, $em);
+        $populator = new Populator($generator, $manager);
 
         $populator->addEntity(Quiz::class, 7, [
             'name'     => function () {
@@ -81,28 +114,7 @@ class GenerateFakeDataCommand extends ContainerAwareCommand
                 return new \DateTime();
             }
         ]);
-        $populator->addEntity(User::class, 1, [
-            'avatar' => 'https://api.adorable.io/avatars/64/abott@adorable.png'
-        ]);
-        $populator->execute();
 
-//         $userManager = $this->get('fos_user.user_manager');
-//         $user = $userManager->createUser();
-//         $user = new User;
-//         $username = 'admin';
-//         $email = 'admin@example.com';
-//         $password = $passwordEncoder->encodePassword($user, 'password');
-//         $firstName = 'Francisco';
-//         $lastName = 'Bueno';
-//
-//         $user->setUsername($username);
-//         $user->setEmail($email);
-//         $user->setPassword($password);
-//         $user->setFirstName($firstName);
-//         $user->setLastName($lastName);
-//         $user->setEnabled(true);
-//         $em = $this->getDoctrine()->getManager();
-//         $em->persist($user);
-//         $em->flush();
+        $populator->execute();
     }
 }
